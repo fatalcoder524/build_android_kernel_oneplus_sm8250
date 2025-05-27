@@ -2,86 +2,15 @@ diff --git a/kernel/msm-4.19/Makefile b/kernel/msm-4.19/Makefile
 index d39e2298672a..278eda773b03 100755
 --- a/kernel/msm-4.19/Makefile
 +++ b/kernel/msm-4.19/Makefile
-@@ -496,7 +496,7 @@ LINUXINCLUDE    := \
+@@ -439,10 +439,7 @@ LINUXINCLUDE    := \
  		$(USERINCLUDE)
  
- KBUILD_AFLAGS   := -D__ASSEMBLY__ -fno-PIE
+ KBUILD_AFLAGS   := -D__ASSEMBLY__
 -KBUILD_CFLAGS   := -Wall -Wundef -Werror=strict-prototypes -Wno-trigraphs \
-+KBUILD_CFLAGS   := -Wall -Wundef -Wno-error=strict-prototypes -Wno-void-pointer-to-int-cast -Wno-vla-extension -Wno-pointer-to-int-cast -Wno-trigraphs \
- 		   -fno-strict-aliasing -fno-common -fshort-wchar -fno-PIE \
- 		   -Werror=implicit-function-declaration -Werror=implicit-int \
- 		   -Werror=return-type -Wno-format-security \
-@@ -1068,7 +1068,7 @@
- KBUILD_CFLAGS += -Wdeclaration-after-statement
- 
- # Variable Length Arrays (VLAs) should not be used anywhere in the kernel
--KBUILD_CFLAGS += -Wvla
-+KBUILD_CFLAGS += -Wno-vla
- 
- # disable pointer signed / unsigned warnings in gcc 4.0
- KBUILD_CFLAGS += -Wno-pointer-sign
-diff --git a/kernel/msm-4.19/techpack/audio/asoc/codecs/tfa98xx-v6/Kbuild b/kernel/msm-4.19/techpack/audio/asoc/codecs/tfa98xx-v6/Kbuild
-index 0197dd9cb4a9..81128e2abd8a 100755
---- a/kernel/msm-4.19/techpack/audio/asoc/codecs/tfa98xx-v6/Kbuild
-+++ b/kernel/msm-4.19/techpack/audio/asoc/codecs/tfa98xx-v6/Kbuild
-@@ -93,6 +93,7 @@ INCS +=		$(COMMON_INC) \
- 
- EXTRA_CFLAGS += $(INCS)
- 
-+EXTRA_CFLAGS += -Wno-vla-extension
- 
- CDEFINES +=	-DANI_LITTLE_BYTE_ENDIAN \
- 		-DANI_LITTLE_BIT_ENDIAN \
-        diff --git a/vendor/oplus/kernel/oplus_performance/sched_assist/sched_assist_slide.c b/vendor/oplus/kernel/oplus_performance/sched_assist/sched_assist_slide.c
-diff --git a/vendor/oplus/kernel/oplus_performance/sched_assist/sched_assist_slide.c b/vendor/oplus/kernel/oplus_performance/sched_assist/sched_assist_slide.c
-index 29323544..0729ae3d 100755
---- a/vendor/oplus/kernel/oplus_performance/sched_assist/sched_assist_slide.c
-+++ b/vendor/oplus/kernel/oplus_performance/sched_assist/sched_assist_slide.c
-@@ -136,7 +136,7 @@ u64 _slide_get_boost_load(int cpu) {
- 		return 0;
- 	}
- }
--void adjust_sched_assist_input_ctrl() {
-+void adjust_sched_assist_input_ctrl(void) {
- 	static int input_boost_old = 0;
- 	if (sysctl_input_boost_enabled && sysctl_slide_boost_enabled) {
- 		sysctl_input_boost_enabled = 0;
-diff --git a/kernel/msm-4.19/drivers/gpu/msm/kgsl_sharedmem.c b/kernel/msm-4.19/drivers/gpu/msm/kgsl_sharedmem.c
-index 2eb6b926feda..5095ea116f73 100755
---- a/kernel/msm-4.19/drivers/gpu/msm/kgsl_sharedmem.c
-+++ b/kernel/msm-4.19/drivers/gpu/msm/kgsl_sharedmem.c
-@@ -376,7 +376,7 @@ void kgsl_process_init_sysfs(struct kgsl_device *device,
- 
- }
- #ifdef OPLUS_FEATURE_HEALTHINFO
--void gpu_usage_show()
-+void gpu_usage_show(void)
- {
- 	struct kgsl_process_private *p;
- 	int type = KGSL_MEM_ENTRY_KERNEL;
-diff --git a/kernel/msm-4.19/techpack/display/oplus/oplus_display_panel.c b/kernel/msm-4.19/techpack/display/oplus/oplus_display_panel.c
-index d71bd0c8d2b6..865890557f98 100755
---- a/kernel/msm-4.19/techpack/display/oplus/oplus_display_panel.c
-+++ b/kernel/msm-4.19/techpack/display/oplus/oplus_display_panel.c
-@@ -488,7 +488,7 @@ int oplus_display_panel_init(void)
- 	return rc;
- }
- 
--void __exit oplus_display_panel_exit()
-+void __exit oplus_display_panel_exit(void)
- {
- 	pr_err("%s\n", __func__);
- 
-diff --git a/kernel/msm-4.19/drivers/leds/leds-qti-flash.c b/kernel/msm-4.19/drivers/leds/leds-qti-flash.c
-index 2eb6b926feda..5095ea116f73 100755
---- a/kernel/msm-4.19/drivers/leds/leds-qti-flash.c
-+++ b/kernel/msm-4.19/drivers/leds/leds-qti-flash.c
-@@ -1791,7 +1791,7 @@
- 		return -EINVAL;
- 	}
- 
--	led->max_channels = (u8)of_device_get_match_data(&pdev->dev);
-+	led->max_channels = (u8)(uintptr_t)of_device_get_match_data(&pdev->dev);
- 	if (!led->max_channels) {
- 		pr_err("Failed to get max supported led channels\n");
- 		return -EINVAL;
++KBUILD_CFLAGS   := -Wno-error
+- 		   -fno-strict-aliasing -fno-common -fshort-wchar \
+- 		   -Werror-implicit-function-declaration \
+- 		   -Wno-format-security \
+ KBUILD_CPPFLAGS := -D__KERNEL__
+ KBUILD_AFLAGS_KERNEL :=
+ KBUILD_CFLAGS_KERNEL :=
