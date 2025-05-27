@@ -1,0 +1,171 @@
+name: Build
+permissions:
+  contents: write  # Allow writing to repository contents (for pushing tags)
+  actions: write   # Allows triggering actions
+
+on:
+  workflow_dispatch: # This allows this workflow to be called from another workflow
+    
+
+jobs:
+  build-kernel-oneplus-kernelsu-susfs:
+    runs-on: ubuntu-22.04
+
+  steps:
+      - name: Setup System
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          echo "DEBIAN_FRONTEND=noninteractive" >> $GITHUB_ENV
+          
+          df -h
+          
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL /usr/local/share/powershell /usr/share/swift || true
+          sudo docker image prune --all --force
+          echo "some directories deleted"
+          
+          # Remove large unwanted packages
+          sudo apt-get purge -y \
+            aria2 ansible azure-cli shellcheck rpm xorriso zsync \
+            firefox gfortran-9 google-chrome-stable \
+            google-cloud-sdk imagemagick \
+            libmagickcore-dev libmagickwand-dev libmagic-dev ant ant-optional kubectl \
+            mercurial apt-transport-https mono-complete \
+            unixodbc-dev yarn chrpath libxft-dev \
+            libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev \
+            snmp pollinate libpq-dev postgresql-client powershell ruby-full \
+            sphinxsearch subversion microsoft-edge-stable || true
+            
+          # Regex-based purges (for bulk families like mysql, php, dotnet)
+          sudo apt-get purge -y $(dpkg-query -W -f='${binary:Package}\n' | grep -E '^mysql|^php|^dotnet') || true
+          
+          # Clean up
+          sudo apt-get autoremove -y
+          sudo apt-get autoclean -y
+          echo "some packages purged"
+          
+          df -h
+
+      - uses: actions/checkout@v4
+
+      - name: Set CONFIG Environment Variable
+        run: |
+          CONFIG="OP9r"
+          echo "Creating folder for configuration: $CONFIG..."
+          mkdir -p "$CONFIG"
+          
+          # Set CONFIG as an environment variable for future steps
+          echo "CONFIG=$CONFIG" >> $GITHUB_ENV
+          
+          echo "CONFIG set to: $CONFIG"
+
+      - name: Install Repo and Python
+        run: |
+          # Install dependencies
+          sudo apt-get update
+          sudo apt-get install -y curl git ftp lftp wget libarchive-tools ccache python3
+          sudo apt-get install -y pngcrush schedtool dpkg-dev liblz4-tool make optipng maven device-tree-compiler 
+          sudo apt-get install -y libc6-dev-i386 lib32ncurses5-dev libx11-dev lib32z-dev libgl1-mesa-dev xsltproc
+          sudo apt-get install -y libxml2-utils libbz2-dev libbz2-1.0 libghc-bzlib-dev squashfs-tools lzop flex tree 
+          sudo apt-get install -y pwgen libswitch-perl policycoreutils minicom libxml-sax-base-perl libxml-simple-perl 
+          sudo apt-get install -y zip unzip tar gzip bzip2 rar unrar llvm g++-multilib bison gperf zlib1g-dev automake
+          sudo apt-get install -y build-essential bc gcc-aarch64-linux-gnu gcc-arm-linux-gnueabi libssl-dev libfl-dev binutils-aarch64-linux-gnu
+          
+          mkdir -p "${{ env.CONFIG }}/git-repo"
+          curl -sSL https://storage.googleapis.com/git-repo-downloads/repo > "${{ env.CONFIG }}/git-repo/repo"
+          chmod a+rx "${{ env.CONFIG }}/git-repo/repo"
+          echo "REPO=${{ github.workspace }}/${{ env.CONFIG }}/git-repo/repo" >> $GITHUB_ENV
+
+      - name: Initialize and Sync Kernel Source
+        run: |
+          cd "$CONFIG"
+          
+          # Initialize and sync kernel source
+          echo "Initializing and syncing kernel source..."
+          $REPO init -u https://github.com/fatalcoder524/build_android_kernel_oneplus_sm8250.git -b main -m oneplus_9r_manifest.xml --repo-rev=v2.16 --depth=1 --no-clone-bundle --no-tags
+          
+          # Sync repo and apply patches
+          $REPO --trace sync -c --no-clone-bundle --no-tags --optimized-fetch -j$(nproc --all) --fail-fast
+
+          set -x
+          echo "${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/clang/host/linux-x86/clang-r416183b/bin" >> $GITHUB_PATH
+          echo "${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin" >> $GITHUB_PATH
+          echo "${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin" >> $GITHUB_PATH^
+
+#      - name: Add KernelSU
+#        run: |
+#          echo "Changing to configuration directory: $CONFIG..."
+#          cd "$CONFIG/kernel/msm-4.19"
+#          
+#          echo "Adding KernelSU..."
+#          curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash -s next-susfs-dev
+#          
+#          git submodule update --init --recursive
+#          cd KernelSU-Next/kernel
+#          KSUN_VERSION=$(expr $(/usr/bin/git rev-list --count HEAD) "+" 10200)
+#          echo "KSUNVER=$KSUN_VERSION" >> $GITHUB_ENV
+#          sed -i "s/DKSU_VERSION=11998/DKSU_VERSION=${KSUN_VERSION}/" Makefile
+#          
+#          cd ../../
+#          about_kprobe="
+#          CONFIG_MODULES=y
+#          CONFIG_KPROBES=y
+#          CONFIG_HAVE_KPROBES=y
+#          CONFIG_TRACING_SUPPORT=y
+#          CONFIG_FTRACE=y
+#          CONFIG_HAVE_REGS_AND_STACK_ACCESS_API=y
+#          CONFIG_KPROBE_EVENTS=y
+#          "
+#          for config_name in $about_kprobe
+#          do
+#            printf "\n$config_name\n" >> "arch/arm64/configs/vendor/kona-perf_defconfig"
+#          done
+#
+#      - name: Apply KSU Hooks
+#        run: |
+#          echo "Changing to configuration directory: $CONFIG..."
+#          cd "$CONFIG/kernel/msm-4.19"
+#          bash $GITHUB_WORKSPACE/ksu_patch.sh
+
+      - name: Run sed and perl Commands
+        run: |
+          echo "Changing to configuration directory: $CONFIG..."
+          cd "$CONFIG/kernel/msm-4.19"
+          
+          echo "Running sed commands..."
+          
+          sed -i 's/CONFIG_LTO=n/CONFIG_LTO=y/' "./arch/arm64/configs/gki_defconfig"
+          sed -i 's/CONFIG_LTO_CLANG_FULL=y/CONFIG_LTO_CLANG_THIN=y/' "./arch/arm64/configs/gki_defconfig"
+          sed -i 's/CONFIG_LTO_CLANG_NONE=y/CONFIG_LTO_CLANG_THIN=y/' "./arch/arm64/configs/gki_defconfig"
+          
+          # Run sed commands for modifications
+          sed -i 's/check_defconfig//' ./build.config.gki
+          sed -i '$s|echo "\$res"|echo "\$res-fatalcoder524"|' ./scripts/setlocalversion
+          sed -i 's/-dirty//' ./scripts/setlocalversion
+         
+          # Run perl command to modify UTS_VERSION
+          perl -pi -e 's{UTS_VERSION="\$\(echo \$UTS_VERSION \$CONFIG_FLAGS \$TIMESTAMP \| cut -b -\$UTS_LEN\)"}{UTS_VERSION="#1 SMP PREEMPT Thu Mar 05 04:20:00 UTC 2025"}' ./scripts/mkcompile_h
+
+      - name: GCC Build
+        run: |
+          cd "$CONFIG"
+          make vendor/kona-perf_defconfig O=out CC=clang
+          make -j$(nproc --all) O=out \
+                                CC=clang \
+                                ARCH=arm64 \
+                                CROSS_COMPILE=aarch64-linux-gnu- \
+                                NM=llvm-nm \
+                                OBJDUMP=llvm-objdump \
+                                STRIP=llvm-strip
+
+      - name: Create zip
+        run: |
+          cd "$CONFIG"
+          ls -la .
+          zip -r9 artifacts.zip out
+
+      - name: Upload Kernel Source Archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: kernel-artifacts
+          path: ${{ env.CONFIG }}/*.zip
+          retention-days: 7

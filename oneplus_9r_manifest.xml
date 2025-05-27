@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <remote fetch="https://android.googlesource.com/" name="aosp"/>
+  <remote fetch="https://github.com/" name="github"/>
+  <remote fetch="https://github.com/OnePlusOSS" name="origin"/>
+
+  <default revision="master-kernel-build-2021" remote="aosp" sync-j="4" />
+  <superproject name="kernel/superproject" remote="aosp" revision="common-android-4.19-stable" />
+  <project path="build" name="kernel/build" clone-depth="1"/>
+  <project path="kernel/tests" name="kernel/tests" clone-depth="1"/>
+  <project path="kernel/configs" name="kernel/configs" clone-depth="1"/>
+  <project path="prebuilts/build-tools" name="platform/prebuilts/build-tools" clone-depth="1"/>
+  <project path="prebuilts/kernel-build-tools" name="kernel/prebuilts/build-tools" clone-depth="1"/>
+  <project path="tools/mkbootimg" name="platform/system/tools/mkbootimg" clone-depth="1"/>
+  <project path="tools/libufdt" name="platform/system/libufdt" revision="master" remote="aosp" clone-depth="1"/>
+  <project path="prebuilts/clang/host/linux-x86" name="platform/prebuilts/clang/host/linux-x86" clone-depth="1"/>
+  <project path="prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9" name="platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9" clone-depth="1"/>
+  <project path="prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9" name="platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9" clone-depth="1"/>
+
+  <project remote="origin" name="android_kernel_oneplus_sm8250" path="kernel/msm-4.19" revision="oneplus/sm8250_u_14.0.0_op9r" clone-depth="1"/>
+  <project remote="origin" name="android_kernel_modules_and_devicetree_oneplus_sm8250" path="./" revision="oneplus/sm8250_u_14.0.0_op9r" clone-depth="1">
+    <linkfile src="vendor" dest="vendor" />
+    <linkfile src="vendor/qcom/opensource/wlan/fw-api" dest="kernel/msm-4.19/drivers/staging/fw-api" />
+    <linkfile src="vendor/qcom/opensource/wlan/qca-wifi-host-cmn" dest="kernel/msm-4.19/drivers/staging/qca-wifi-host-cmn" />
+    <linkfile src="vendor/qcom/opensource/wlan/qcacld-3.0" dest="kernel/msm-4.19/drivers/staging/qcacld-3.0" />
+    <linkfile src="vendor/qcom/opensource/wlan/utils" dest="kernel/msm-4.19/drivers/staging/utils" />
+  </project>
+
+  <!-- AnyKernel3 -->
+
+  <!-- kernel_patches -->
+  <project path="kernel_patches" name="TheWildJames/kernel_patches" remote="github" revision="main" clone-depth="1" />
+  
+  <!-- susfs4ksu -->
+  <project path="susfs4ksu" name="simonpunk/susfs4ksu" remote="gitlab" revision="kernel-4.19" clone-depth="1" />
+</manifest>
