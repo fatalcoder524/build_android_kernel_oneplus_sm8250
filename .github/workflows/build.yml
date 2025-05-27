@@ -153,7 +153,8 @@ jobs:
           export ARCH=arm64
           export SUBARCH=arm64
           KERNEL_DIR=`pwd`
-          make O=out ARCH=arm64 LLVM=1 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CC=clang LD=ld.lld HOSTCC=clang HOSTLD=ld.lld KCFLAGS+=-Wno-error kernel/msm-4.19/arch/arm64/configs/vendor/kona-perf_defconfig
+          cd kernel/msm-4.19
+          make O=out ARCH=arm64 LLVM=1 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CC=clang LD=ld.lld HOSTCC=clang HOSTLD=ld.lld KCFLAGS+=-Wno-error vendor/kona-perf_defconfig
           make -j$(nproc) O=out ARCH=arm64 LLVM=1 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CC=clang LD=ld.lld HOSTCC=clang HOSTLD=ld.lld KCFLAGS+=-Wno-error all
 #          make vendor/kona-perf_defconfig O=out CC=clang
 #          make -j$(nproc --all) O=out \
