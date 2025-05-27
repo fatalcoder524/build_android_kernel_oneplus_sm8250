@@ -11,7 +11,7 @@ jobs:
   build-kernel-oneplus-kernelsu-susfs:
     runs-on: ubuntu-22.04
 
-  steps:
+    steps:
       - name: Setup System
         run: |
           export DEBIAN_FRONTEND=noninteractive
