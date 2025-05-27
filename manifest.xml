@@ -2,6 +2,7 @@
 <manifest>
   <remote fetch="https://android.googlesource.com/" name="aosp"/>
   <remote fetch="https://github.com/" name="github"/>
+  <remote fetch="https://gitlab.com/" name="gitlab"/>
   <remote fetch="https://github.com/OnePlusOSS" name="origin"/>
 
   <default revision="master-kernel-build-2021" remote="aosp" sync-j="4" />
