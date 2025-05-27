@@ -83,7 +83,7 @@ jobs:
           git config --local user.name "GitHub Action"
           # Initialize and sync kernel source
           echo "Initializing and syncing kernel source..."
-          $REPO init -u https://github.com/fatalcoder524/build_android_kernel_oneplus_sm8250.git -b main -m oneplus_9r_manifest.xml --repo-rev=v2.16 --depth=1 --no-clone-bundle --no-tags
+          $REPO init -u https://github.com/fatalcoder524/build_android_kernel_oneplus_sm8250.git -b main -m manifest.xml --repo-rev=v2.16 --depth=1 --no-clone-bundle --no-tags
           
           # Sync repo and apply patches
           $REPO --trace sync -c --no-clone-bundle --no-tags --optimized-fetch -j$(nproc --all) --fail-fast
