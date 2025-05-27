@@ -150,14 +150,18 @@ jobs:
       - name: GCC Build
         run: |
           cd "$CONFIG"
-          make vendor/kona-perf_defconfig O=out CC=clang
-          make -j$(nproc --all) O=out \
-                                CC=clang \
-                                ARCH=arm64 \
-                                CROSS_COMPILE=aarch64-linux-gnu- \
-                                NM=llvm-nm \
-                                OBJDUMP=llvm-objdump \
-                                STRIP=llvm-strip
+          export ARCH=arm64
+          export SUBARCH=arm64
+          KERNEL_DIR=`pwd`
+          make -j$(nproc --all) LLVM=1 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnuabeihf- CC=clang LD=ld.lld HOSTCC=clang HOSTLD=ld.lld O=out KCFLAGS+=-Wno-error vendor/kona-perf_defconfig all
+#          make vendor/kona-perf_defconfig O=out CC=clang
+#          make -j$(nproc --all) O=out \
+#                                CC=clang \
+#                                ARCH=arm64 \
+#                                CROSS_COMPILE=aarch64-linux-gnu- \
+#                                NM=llvm-nm \
+#                                OBJDUMP=llvm-objdump \
+#                                STRIP=llvm-strip
 
       - name: Create zip
         run: |
