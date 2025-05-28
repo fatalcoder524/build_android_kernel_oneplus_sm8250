@@ -89,7 +89,7 @@ jobs:
           $REPO --trace sync -c --no-clone-bundle --no-tags --optimized-fetch -j$(nproc --all) --fail-fast
 
           set -x
-          echo "${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/clang/host/linux-x86/clang-r416183b/bin" >> $GITHUB_PATH
+          echo "${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/clang/host/linux-x86/clang-r383902/bin" >> $GITHUB_PATH
           echo "${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin" >> $GITHUB_PATH
           echo "${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin" >> $GITHUB_PATH^
 
