@@ -2,15 +2,17 @@ diff --git a/kernel/msm-4.19/Makefile b/kernel/msm-4.19/Makefile
 index d39e2298672a..278eda773b03 100755
 --- a/kernel/msm-4.19/Makefile
 +++ b/kernel/msm-4.19/Makefile
-@@ -439,10 +439,7 @@ LINUXINCLUDE    := \
+@@ -439,11 +439,7 @@
  		$(USERINCLUDE)
  
  KBUILD_AFLAGS   := -D__ASSEMBLY__
--KBUILD_CFLAGS   := -Wall -Wundef -Werror=strict-prototypes -Wno-trigraphs \
-- 		   -fno-strict-aliasing -fno-common -fshort-wchar \
-- 		   -Werror-implicit-function-declaration \
-- 		   -Wno-format-security \
-+KBUILD_CFLAGS   := -Wno-error
+-KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
+-		   -fno-strict-aliasing -fno-common -fshort-wchar \
+-		   -Werror-implicit-function-declaration \
+-		   -Wno-format-security \
+-		   -std=gnu89
++KBUILD_CFLAGS   := -Wno-error -std=gnu89
  KBUILD_CPPFLAGS := -D__KERNEL__
  KBUILD_AFLAGS_KERNEL :=
  KBUILD_CFLAGS_KERNEL :=
+
