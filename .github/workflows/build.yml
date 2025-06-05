@@ -155,6 +155,10 @@ jobs:
           patch -p1 -F 3 < ../fix_op9r_build_errors.patch
           export ARCH=arm64
           export SUBARCH=arm64
+          export LTO=thin
+          export SKIP_MRPROPER=1
+          export BUILD_KERNEL=1
+          export BUILTIN=1
           export BUILD_CONFIG=kernel/msm-4.19/build.config.gki
           KERNEL_DIR=`pwd`
           LLVM=1 LLVM_IAS=1 build/build.sh -j$(nproc)
