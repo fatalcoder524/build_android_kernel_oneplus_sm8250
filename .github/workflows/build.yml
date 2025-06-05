@@ -74,6 +74,8 @@ jobs:
           curl -sSL https://storage.googleapis.com/git-repo-downloads/repo > "${{ env.CONFIG }}/git-repo/repo"
           chmod a+rx "${{ env.CONFIG }}/git-repo/repo"
           echo "REPO=${{ github.workspace }}/${{ env.CONFIG }}/git-repo/repo" >> $GITHUB_ENV
+          
+          sudo update-alternatives --install /usr/bin/python python /usr/bin/python2 1
 
       - name: Initialize and Sync Kernel Source
         run: |
