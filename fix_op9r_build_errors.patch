@@ -15,10 +15,10 @@ index d39e2298672a..278eda773b03 100755
  KBUILD_CPPFLAGS := -D__KERNEL__
  KBUILD_AFLAGS_KERNEL :=
  KBUILD_CFLAGS_KERNEL :=
-diff --git a/kernel/msm-4.19/techpack/camera/drivers/oplus/cam_sensor_module/cam_ois/onsemi_fw/LC898124/DownloadCmd.c b/kernel/msm-4.19/techpack/camera/drivers/oplus/cam_sensor_module/cam_ois/onsemi_fw/LC898124/DownloadCmd.c
+diff --git a/kernel/msm-4.19/techpack/camera/drivers/cam_sensor_module/cam_ois/onsemi_fw/LC898124/DownloadCmd.c b/kernel/msm-4.19/techpack/camera/drivers/cam_sensor_module/cam_ois/onsemi_fw/LC898124/DownloadCmd.c
 index e54462465546..4bf8a416e390 100755
---- a/kernel/msm-4.19/techpack/camera/drivers/oplus/cam_sensor_module/cam_ois/onsemi_fw/LC898124/DownloadCmd.c
-+++ b/kernel/msm-4.19/techpack/camera/drivers/oplus/cam_sensor_module/cam_ois/onsemi_fw/LC898124/DownloadCmd.c
+--- a/kernel/msm-4.19/techpack/camera/drivers/cam_sensor_module/cam_ois/onsemi_fw/LC898124/DownloadCmd.c
++++ b/kernel/msm-4.19/techpack/camera/drivers/cam_sensor_module/cam_ois/onsemi_fw/LC898124/DownloadCmd.c
 @@ -387,7 +388,7 @@
  
  	// 高速化対応Download
