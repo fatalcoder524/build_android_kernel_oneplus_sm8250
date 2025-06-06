@@ -91,7 +91,7 @@ jobs:
           $REPO --trace sync -c --no-clone-bundle --no-tags --optimized-fetch -j$(nproc --all) --fail-fast
 
           set -x
-          git clone https://github.com/kdrag0n/proton-clang -b master --depth=1 clang
+          git clone https://github.com/kdrag0n/proton-clang.git -b master --depth=1 clang
           echo "${{ github.workspace }}/${{ env.CONFIG }}/clang/bin" >> $GITHUB_PATH
           echo "${{ github.workspace }}/${{ env.CONFIG }}/clang/aarch64-linux-gnu/bin" >> $GITHUB_PATH
           echo "${{ github.workspace }}/${{ env.CONFIG }}/clang/arm-linux-gnueabi/bin" >> $GITHUB_PATH
