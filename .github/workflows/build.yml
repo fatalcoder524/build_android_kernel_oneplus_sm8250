@@ -91,9 +91,13 @@ jobs:
           $REPO --trace sync -c --no-clone-bundle --no-tags --optimized-fetch -j$(nproc --all) --fail-fast
 
           set -x
-          echo "${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/clang/host/linux-x86/clang-r399163b/bin" >> $GITHUB_PATH
-          echo "${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin" >> $GITHUB_PATH
-          echo "${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin" >> $GITHUB_PATH
+          git clone https://github.com/kdrag0n/proton-clang -b master --depth=1 clang
+          echo "${{ github.workspace }}/${{ env.CONFIG }}/clang/bin" >> $GITHUB_PATH
+          echo "${{ github.workspace }}/${{ env.CONFIG }}/clang/aarch64-linux-gnu/bin" >> $GITHUB_PATH
+          echo "${{ github.workspace }}/${{ env.CONFIG }}/clang/arm-linux-gnueabi/bin" >> $GITHUB_PATH
+          # echo "${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/clang/host/linux-x86/clang-r399163b/bin" >> $GITHUB_PATH
+          # echo "${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin" >> $GITHUB_PATH
+          # echo "${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin" >> $GITHUB_PATH
 
 #      - name: Add KernelSU
 #        run: |
