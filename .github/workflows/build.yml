@@ -174,8 +174,8 @@ jobs:
           cd kernel/msm-4.19
           sed -i 's/KBUILD_CFLAGS   += $(call cc-option,-Werror=strict-prototypes)/# KBUILD_CFLAGS   += $(call cc-option,-Werror=strict-prototypes)/' Makefile
           sed -i 's/KBUILD_CFLAGS   += $(call cc-option,-Werror=implicit-int)/# KBUILD_CFLAGS   += $(call cc-option,-Werror=implicit-int)/' Makefile
-          make O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CC=${{ env.GCC_TOOLCHAIN }}/aarch64-linux-gnu-gcc LD=${{ env.GCC_TOOLCHAIN }}/aarch64-linux-gnu-ld HOSTCC=gcc HOSTLD=ld KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" vendor/kona-perf_defconfig
-          make -j$(nproc) O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CC=${{ env.GCC_TOOLCHAIN }}/aarch64-linux-gnu-gcc LD=${{ env.GCC_TOOLCHAIN }}/aarch64-linux-gnu-ld HOSTCC=gcc HOSTLD=ld KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" all
+          make O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CC=${{ env.GCC_TOOLCHAIN }}/aarch64-linux-gnu-gcc LD=${{ env.GCC_TOOLCHAIN }}/aarch64-linux-gnu-ld HOSTCC=gcc HOSTLD=ld KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" vendor/kona-perf_defconfig
+          make -j$(nproc) O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CC=${{ env.GCC_TOOLCHAIN }}/aarch64-linux-gnu-gcc LD=${{ env.GCC_TOOLCHAIN }}/aarch64-linux-gnu-ld HOSTCC=gcc HOSTLD=ld KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" all
 #          make vendor/kona-perf_defconfig O=out CC=clang
 #          make -j$(nproc --all) O=out \
 #                                CC=clang \
