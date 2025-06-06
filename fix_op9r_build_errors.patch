@@ -15,4 +15,16 @@ index d39e2298672a..278eda773b03 100755
  KBUILD_CPPFLAGS := -D__KERNEL__
  KBUILD_AFLAGS_KERNEL :=
  KBUILD_CFLAGS_KERNEL :=
-
+diff --git a/kernel/msm-4.19/techpack/camera/drivers/oplus/cam_sensor_module/cam_ois/onsemi_fw/LC898124/DownloadCmd.c b/kernel/msm-4.19/techpack/camera/drivers/oplus/cam_sensor_module/cam_ois/onsemi_fw/LC898124/DownloadCmd.c
+index e54462465546..4bf8a416e390 100755
+--- a/kernel/msm-4.19/techpack/camera/drivers/oplus/cam_sensor_module/cam_ois/onsemi_fw/LC898124/DownloadCmd.c
++++ b/kernel/msm-4.19/techpack/camera/drivers/oplus/cam_sensor_module/cam_ois/onsemi_fw/LC898124/DownloadCmd.c
+@@ -387,7 +388,7 @@
+ 
+ 	// 高速化対応Download
+ TRACE("DataPM( %08x ), LengthPM( %08x ) , Parity( %08x ), DataDM( %08x ) , LengthDMA( %08x ) , LengthDMB( %08x ) \n"
+-	, (int)ptr->DataPM , (int)ptr->LengthPM , (int)ptr->Parity , (int)ptr->DataDM , (int)ptr->LengthDMA , (int)ptr->LengthDMB );
++	, (uintptr_t)ptr->DataPM , (uintptr_t)ptr->LengthPM , (uintptr_t)ptr->Parity , (uintptr_t)ptr->DataDM , (uintptr_t)ptr->LengthDMA , (uintptr_t)ptr->LengthDMB );
+ 	return( DownloadToEP3( ptr->DataPM, ptr->LengthPM, ptr->Parity, ptr->DataDM, ptr->LengthDMA , ptr->LengthDMB ) ); 
+ }
+ 
