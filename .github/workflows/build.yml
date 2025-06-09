@@ -96,13 +96,12 @@ jobs:
           # echo "GCC_TOOLCHAIN=${{ github.workspace }}/${{ env.CONFIG }}/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu/bin" >> $GITHUB_ENV
           # echo "${{ github.workspace }}/${{ env.CONFIG }}/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu/bin" >> $GITHUB_PATH
           # echo "${{ github.workspace }}/${{ env.CONFIG }}/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu/aarch64-linux-gnu/bin" >> $GITHUB_PATH
-          # git clone https://github.com/kdrag0n/proton-clang.git -b master --depth=1 clang
-          # echo "${{ github.workspace }}/${{ env.CONFIG }}/clang/bin" >> $GITHUB_PATH
-          # echo "${{ github.workspace }}/${{ env.CONFIG }}/clang/aarch64-linux-gnu/bin" >> $GITHUB_PATH
-          # echo "${{ github.workspace }}/${{ env.CONFIG }}/clang/arm-linux-gnueabi/bin" >> $GITHUB_PATH
-          echo "${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/clang/host/linux-x86/clang-r399163b/bin" >> $GITHUB_PATH
-          echo "${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin" >> $GITHUB_PATH
+      
           echo "${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin" >> $GITHUB_PATH
+          echo "${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin" >> $GITHUB_PATH
+          echo "${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/gcc/linux-x86/x86/x86_64-linux-android-4.9/bin" >> $GITHUB_PATH
+          # echo "${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/clang/host/linux-x86/clang-r399163b/bin" >> $GITHUB_PATH
+          echo "$PATH"
 
 #      - name: Add KernelSU
 #        run: |
@@ -174,12 +173,12 @@ jobs:
           cd kernel/msm-4.19
           sed -i 's/KBUILD_CFLAGS   += $(call cc-option,-Werror=strict-prototypes)/# KBUILD_CFLAGS   += $(call cc-option,-Werror=strict-prototypes)/' Makefile
           sed -i 's/KBUILD_CFLAGS   += $(call cc-option,-Werror=implicit-int)/# KBUILD_CFLAGS   += $(call cc-option,-Werror=implicit-int)/' Makefile
-          sed -i '/gcc-wrapper/d' Makefile
-          # make O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CC=${{ env.GCC_TOOLCHAIN }}/aarch64-linux-gnu-gcc LD=${{ env.GCC_TOOLCHAIN }}/aarch64-linux-gnu-ld HOSTCC=gcc HOSTLD=ld KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" vendor/kona-perf_defconfig
-          # make -j$(nproc) O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CC=${{ env.GCC_TOOLCHAIN }}/aarch64-linux-gnu-gcc LD=${{ env.GCC_TOOLCHAIN }}/aarch64-linux-gnu-ld HOSTCC=gcc HOSTLD=ld KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" all
+          # sed -i '/gcc-wrapper/d' Makefile
+          make O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CC=aarch64-linux-gnu-gcc LD=aarch64-linux-gnu-ld HOSTCC=gcc HOSTLD=ld KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" vendor/kona-perf_defconfig
+          make -j$(nproc) O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CC=aarch64-linux-gnu-gcc LD=aarch64-linux-gnu-ld HOSTCC=gcc HOSTLD=ld KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" all
           
-          make O=out LLVM=1 LD=ld.lld HOSTLD=ld.lld ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CC=clang HOSTCC=clang KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" vendor/kona-perf_defconfig
-          make -j$(nproc) O=out LLVM=1 LD=ld.lld HOSTLD=ld.lld ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CC=clang HOSTCC=clang KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" all
+          # make O=out LLVM=1 LD=ld.lld HOSTLD=ld.lld ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CC=clang HOSTCC=clang KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" vendor/kona-perf_defconfig
+          # make -j$(nproc) O=out LLVM=1 LD=ld.lld HOSTLD=ld.lld ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CC=clang HOSTCC=clang KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" all
 #          make vendor/kona-perf_defconfig O=out CC=clang
 #          make -j$(nproc --all) O=out \
 #                                CC=clang \
