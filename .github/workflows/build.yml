@@ -172,11 +172,11 @@ jobs:
           sed -i 's/KBUILD_CFLAGS   += $(call cc-option,-Werror=implicit-int)/# KBUILD_CFLAGS   += $(call cc-option,-Werror=implicit-int)/' Makefile
           # sed -i '/gcc-wrapper/d' Makefile
 
-          make O=out CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
-                CC=aarch64-linux-gnu-gcc LD=aarch64-linux-gnu-ld vendor/kona-perf_defconfig
+          make O=out CROSS_COMPILE=gcc-10-aarch64-linux-gnu- CROSS_COMPILE_ARM32=gcc-10-arm-linux-gnueabi- \
+                CC=gcc-10-aarch64-linux-gnu-gcc LD=gcc-10-aarch64-linux-gnu-ld vendor/kona-perf_defconfig
 
-          make -j$(nproc) O=out CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
-                CC=aarch64-linux-gnu-gcc LD=aarch64-linux-gnu-ld HOSTCC=gcc HOSTLD=ld
+          make -j$(nproc) O=out CROSS_COMPILE=gcc-10-aarch64-linux-gnu CROSS_COMPILE_ARM32=gcc-10-arm-linux-gnueabi- \
+                CC=gcc-10-aarch64-linux-gnu-gcc LD=gcc-10-aarch64-linux-gnu-ld HOSTCC=gcc HOSTLD=ld
           
           # make O=out CROSS_COMPILE=aarch64-linux-gnu- ARCH=arm64 CC=aarch64-linux-gnu-gcc LD=aarch64-linux-gnu-ld KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" vendor/kona-perf_defconfig
           # make -j$(nproc) O=out CROSS_COMPILE=aarch64-linux-gnu- ARCH=arm64 CC=aarch64-linux-gnu-gcc LD=aarch64-linux-gnu-ld KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" all
