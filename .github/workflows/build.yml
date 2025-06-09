@@ -78,8 +78,9 @@ jobs:
           
           sudo update-alternatives --install /usr/bin/python python /usr/bin/python2 1
 
+          set +x
           which aarch64-linux-gnu-gcc-9    # Should output /usr/bin/aarch64-linux-gnu-gcc-10
-          which aarch64-linux-gnu-ld-9     # Should output /usr/bin/aarch64-linux-gnu-ld-10
+          which aarch64-linux-gnu-ld     # Should output /usr/bin/aarch64-linux-gnu-ld-10
           which arm-linux-gnueabi-gcc-9    # Should output /usr/bin/arm-linux-gnueabi-gcc-10
           which gcc                         # Host compiler
           which ld                          # Host linker
@@ -179,10 +180,10 @@ jobs:
           # sed -i '/gcc-wrapper/d' Makefile
 
           make O=out CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
-                CC=aarch64-linux-gnu-gcc-9 LD=aarch64-linux-gnu-ld-9 HOSTCC=gcc HOSTLD=ld vendor/kona-perf_defconfig
+                CC=aarch64-linux-gnu-gcc-9 LD=aarch64-linux-gnu-ld HOSTCC=gcc HOSTLD=ld vendor/kona-perf_defconfig
 
           make -j$(nproc) O=out CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
-                CC=aarch64-linux-gnu-gcc-9 LD=aarch64-linux-gnu-ld-9 HOSTCC=gcc HOSTLD=ld
+                CC=aarch64-linux-gnu-gcc-9 LD=aarch64-linux-gnu-ld HOSTCC=gcc HOSTLD=ld
           
           # make O=out CROSS_COMPILE=aarch64-linux-gnu- ARCH=arm64 CC=aarch64-linux-gnu-gcc LD=aarch64-linux-gnu-ld KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" vendor/kona-perf_defconfig
           # make -j$(nproc) O=out CROSS_COMPILE=aarch64-linux-gnu- ARCH=arm64 CC=aarch64-linux-gnu-gcc LD=aarch64-linux-gnu-ld KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" all
