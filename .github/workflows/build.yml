@@ -68,8 +68,7 @@ jobs:
           sudo apt-get install -y libxml2-utils libbz2-dev libbz2-1.0 libghc-bzlib-dev squashfs-tools lzop flex tree 
           sudo apt-get install -y pwgen libswitch-perl policycoreutils minicom libxml-sax-base-perl libxml-simple-perl 
           sudo apt-get install -y zip unzip tar gzip bzip2 rar unrar llvm g++-multilib bison gperf zlib1g-dev automake
-          sudo apt-get install -y build-essential bc libssl-dev libfl-dev 
-          # gcc-aarch64-linux-gnu gcc-arm-linux-gnueabi binutils-aarch64-linux-gnu
+          sudo apt-get install -y build-essential bc libssl-dev libfl-dev gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf binutils-aarch64-linux-gnu gcc-arm-linux-gnueabi
           
           mkdir -p "${{ env.CONFIG }}/git-repo"
           curl -sSL https://storage.googleapis.com/git-repo-downloads/repo > "${{ env.CONFIG }}/git-repo/repo"
@@ -178,8 +177,8 @@ jobs:
           # make O=out CC=aarch64-linux-android-gcc vendor/kona-perf_defconfig
           # make -j$(nproc --all) O=out CC=aarch64-linux-android-gcc
           
-          make O=out ARCH=arm64 CC=gcc LD=ld HOSTCC=gcc HOSTLD=ld KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" vendor/kona-perf_defconfig
-          make -j$(nproc) O=out ARCH=arm64 CC=gcc LD=ld HOSTCC=gcc HOSTLD=ld KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" all
+          make O=out ARCH=arm64 CC=${CROSS_COMPILE}gcc LD=${CROSS_COMPILE}ld HOSTCC=gcc HOSTLD=ld KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" vendor/kona-perf_defconfig
+          make -j$(nproc) O=out ARCH=arm64 CC=${CROSS_COMPILE}gcc LD=${CROSS_COMPILE}ld HOSTCC=gcc HOSTLD=ld KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" all
           
           # make O=out LLVM=1 LD=ld.lld HOSTLD=ld.lld ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CC=clang HOSTCC=clang KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" vendor/kona-perf_defconfig
           # make -j$(nproc) O=out LLVM=1 LD=ld.lld HOSTLD=ld.lld ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CC=clang HOSTCC=clang KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" all
