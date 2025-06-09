@@ -68,7 +68,7 @@ jobs:
           sudo apt-get install -y libxml2-utils libbz2-dev libbz2-1.0 libghc-bzlib-dev squashfs-tools lzop flex tree 
           sudo apt-get install -y pwgen libswitch-perl policycoreutils minicom libxml-sax-base-perl libxml-simple-perl 
           sudo apt-get install -y zip unzip tar gzip bzip2 rar unrar llvm g++-multilib bison gperf zlib1g-dev automake
-          sudo apt-get install -y build-essential bc libssl-dev libfl-dev gcc gcc-10-aarch64-linux-gnu gcc-10-arm-linux-gnueabi
+          sudo apt-get install -y build-essential bc libssl-dev libfl-dev gcc gcc-9-aarch64-linux-gnu gcc-9-arm-linux-gnueabi
           sudo apt-get install -y binutils binutils-aarch64-linux-gnu
           
           mkdir -p "${{ env.CONFIG }}/git-repo"
@@ -77,6 +77,12 @@ jobs:
           echo "REPO=${{ github.workspace }}/${{ env.CONFIG }}/git-repo/repo" >> $GITHUB_ENV
           
           sudo update-alternatives --install /usr/bin/python python /usr/bin/python2 1
+
+          which aarch64-linux-gnu-gcc-9    # Should output /usr/bin/aarch64-linux-gnu-gcc-10
+          which aarch64-linux-gnu-ld-9     # Should output /usr/bin/aarch64-linux-gnu-ld-10
+          which arm-linux-gnueabi-gcc-9    # Should output /usr/bin/arm-linux-gnueabi-gcc-10
+          which gcc                         # Host compiler
+          which ld                          # Host linker
 
       - name: Initialize and Sync Kernel Source
         run: |
@@ -172,11 +178,11 @@ jobs:
           sed -i 's/KBUILD_CFLAGS   += $(call cc-option,-Werror=implicit-int)/# KBUILD_CFLAGS   += $(call cc-option,-Werror=implicit-int)/' Makefile
           # sed -i '/gcc-wrapper/d' Makefile
 
-          make O=out CROSS_COMPILE=gcc-10-aarch64-linux-gnu- CROSS_COMPILE_ARM32=gcc-10-arm-linux-gnueabi- \
-                CC=gcc-10-aarch64-linux-gnu-gcc LD=gcc-10-aarch64-linux-gnu-ld vendor/kona-perf_defconfig
+          make O=out CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+                CC=aarch64-linux-gnu-gcc-9 LD=aarch64-linux-gnu-ld-9 HOSTCC=gcc HOSTLD=ld vendor/kona-perf_defconfig
 
-          make -j$(nproc) O=out CROSS_COMPILE=gcc-10-aarch64-linux-gnu CROSS_COMPILE_ARM32=gcc-10-arm-linux-gnueabi- \
-                CC=gcc-10-aarch64-linux-gnu-gcc LD=gcc-10-aarch64-linux-gnu-ld HOSTCC=gcc HOSTLD=ld
+          make -j$(nproc) O=out CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+                CC=aarch64-linux-gnu-gcc-9 LD=aarch64-linux-gnu-ld-9 HOSTCC=gcc HOSTLD=ld
           
           # make O=out CROSS_COMPILE=aarch64-linux-gnu- ARCH=arm64 CC=aarch64-linux-gnu-gcc LD=aarch64-linux-gnu-ld KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" vendor/kona-perf_defconfig
           # make -j$(nproc) O=out CROSS_COMPILE=aarch64-linux-gnu- ARCH=arm64 CC=aarch64-linux-gnu-gcc LD=aarch64-linux-gnu-ld KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" all
