@@ -172,18 +172,26 @@ jobs:
           export ARCH=arm64
           export SUBARCH=arm64
           export LTO=thin
+          export BRAND_SHOW_FLAG=oneplus
           export CROSS_COMPILE=aarch64-linux-gnu-
           export CROSS_COMPILE_ARM32=arm-linux-gnueabi-
+          export CC=aarch64-linux-gnu-gcc-9
+          export LD=aarch64-linux-gnu-ld
+          export HOSTCC=gcc
+          export HOSTLD=ld
+          export BUILD_CONFIG=kernel/msm-4.19/build.config.aarch64
           cd kernel/msm-4.19
           sed -i 's/KBUILD_CFLAGS   += $(call cc-option,-Werror=strict-prototypes)/# KBUILD_CFLAGS   += $(call cc-option,-Werror=strict-prototypes)/' Makefile
           sed -i 's/KBUILD_CFLAGS   += $(call cc-option,-Werror=implicit-int)/# KBUILD_CFLAGS   += $(call cc-option,-Werror=implicit-int)/' Makefile
-          # sed -i '/gcc-wrapper/d' Makefile
+          sed -i '/gcc-wrapper/d' Makefile
 
-          make O=out CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
-                CC=aarch64-linux-gnu-gcc-9 LD=aarch64-linux-gnu-ld HOSTCC=gcc HOSTLD=ld vendor/kona-perf_defconfig
+          LTO=thin KERNEL_DIR=kernel/msm-4.19 ../../build.sh -j$(nproc)
 
-          make -j$(nproc) O=out CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
-                CC=aarch64-linux-gnu-gcc-9 LD=aarch64-linux-gnu-ld HOSTCC=gcc HOSTLD=ld
+          # make O=out CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+          #       CC=aarch64-linux-gnu-gcc-9 LD=aarch64-linux-gnu-ld HOSTCC=gcc HOSTLD=ld vendor/kona-perf_defconfig
+
+          # make -j$(nproc) O=out CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+          #       CC=aarch64-linux-gnu-gcc-9 LD=aarch64-linux-gnu-ld HOSTCC=gcc HOSTLD=ld
           
           # make O=out CROSS_COMPILE=aarch64-linux-gnu- ARCH=arm64 CC=aarch64-linux-gnu-gcc LD=aarch64-linux-gnu-ld KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" vendor/kona-perf_defconfig
           # make -j$(nproc) O=out CROSS_COMPILE=aarch64-linux-gnu- ARCH=arm64 CC=aarch64-linux-gnu-gcc LD=aarch64-linux-gnu-ld KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" all
