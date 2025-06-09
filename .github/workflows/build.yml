@@ -164,18 +164,23 @@ jobs:
           export ARCH=arm64
           export SUBARCH=arm64
           export LTO=thin
-          # export SKIP_MRPROPER=1
-          # export BUILD_KERNEL=1
-          # export BUILTIN=1
-          KERNEL_DIR=`pwd`
-          export KERNEL_DIR=`pwd`
-          # LLVM=1 LLVM_IAS=1 build/build.sh -j$(nproc)
+          export CLANG_TRIPLE=aarch64-linux-gnu-
+          export CROSS_COMPILE=aarch64-linux-android-
+          export CROSS_COMPILE_ARM32=arm-linux-androideabi-
           cd kernel/msm-4.19
           sed -i 's/KBUILD_CFLAGS   += $(call cc-option,-Werror=strict-prototypes)/# KBUILD_CFLAGS   += $(call cc-option,-Werror=strict-prototypes)/' Makefile
           sed -i 's/KBUILD_CFLAGS   += $(call cc-option,-Werror=implicit-int)/# KBUILD_CFLAGS   += $(call cc-option,-Werror=implicit-int)/' Makefile
           # sed -i '/gcc-wrapper/d' Makefile
-          make O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-android- CROSS_COMPILE_ARM32=arm-linux-androideabi- CC=aarch64-linux-android-gcc LD=aarch64-linux-android-ld HOSTCC=gcc HOSTLD=ld KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" vendor/kona-perf_defconfig
-          make -j$(nproc) O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-android- CROSS_COMPILE_ARM32=arm-linux-androideabi- CC=aarch64-linux-android-gcc LD=aarch64-linux-android-ld HOSTCC=gcc HOSTLD=ld KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" all
+
+          PATH=${PATH}:${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/clang/host/linux-x86/clang-r399163b/bin
+          export PATH=${PATH}:${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin
+          export PATH=${PATH}:${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin
+          
+          make O=out vendor/kona-perf_defconfig
+          make -j$(nproc --all) O=out CC=clang
+          
+          # make O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-android- CROSS_COMPILE_ARM32=arm-linux-androideabi- CC=aarch64-linux-android-gcc LD=aarch64-linux-android-ld HOSTCC=gcc HOSTLD=ld KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" vendor/kona-perf_defconfig
+          # make -j$(nproc) O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-android- CROSS_COMPILE_ARM32=arm-linux-androideabi- CC=aarch64-linux-android-gcc LD=aarch64-linux-android-ld HOSTCC=gcc HOSTLD=ld KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" all
           
           # make O=out LLVM=1 LD=ld.lld HOSTLD=ld.lld ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CC=clang HOSTCC=clang KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" vendor/kona-perf_defconfig
           # make -j$(nproc) O=out LLVM=1 LD=ld.lld HOSTLD=ld.lld ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CC=clang HOSTCC=clang KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" all
