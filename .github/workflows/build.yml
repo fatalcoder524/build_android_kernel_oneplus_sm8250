@@ -68,7 +68,7 @@ jobs:
           sudo apt-get install -y libxml2-utils libbz2-dev libbz2-1.0 libghc-bzlib-dev squashfs-tools lzop flex tree 
           sudo apt-get install -y pwgen libswitch-perl policycoreutils minicom libxml-sax-base-perl libxml-simple-perl 
           sudo apt-get install -y zip unzip tar gzip bzip2 rar unrar llvm g++-multilib bison gperf zlib1g-dev automake
-          sudo apt-get install -y build-essential bc libssl-dev libfl-dev gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf binutils-aarch64-linux-gnu gcc-arm-linux-gnueabi
+          sudo apt-get install -y build-essential bc libssl-dev libfl-dev gcc-aarch64-linux-gnu gcc-arm-linux-gnueabi binutils
           
           mkdir -p "${{ env.CONFIG }}/git-repo"
           curl -sSL https://storage.googleapis.com/git-repo-downloads/repo > "${{ env.CONFIG }}/git-repo/repo"
@@ -100,7 +100,7 @@ jobs:
           # echo "${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin" >> $GITHUB_PATH
           # echo "${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin" >> $GITHUB_PATH
           # echo "${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/gcc/linux-x86/x86/x86_64-linux-android-4.9/bin" >> $GITHUB_PATH
-          # echo "${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/clang/host/linux-x86/clang-r399163b/bin" >> $GITHUB_PATH
+          echo "${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/clang/host/linux-x86/clang-r399163b/bin" >> $GITHUB_PATH
           echo "$PATH"
 
 #      - name: Add KernelSU
@@ -164,12 +164,12 @@ jobs:
           export ARCH=arm64
           export SUBARCH=arm64
           export LTO=thin
-          export CROSS_COMPILE=${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-android-
-          export CROSS_COMPILE_ARM32=${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin/arm-linux-androideabi-
+          # export CROSS_COMPILE=${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-android-
+          # export CROSS_COMPILE_ARM32=${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin/arm-linux-androideabi-
           cd kernel/msm-4.19
           sed -i 's/KBUILD_CFLAGS   += $(call cc-option,-Werror=strict-prototypes)/# KBUILD_CFLAGS   += $(call cc-option,-Werror=strict-prototypes)/' Makefile
           sed -i 's/KBUILD_CFLAGS   += $(call cc-option,-Werror=implicit-int)/# KBUILD_CFLAGS   += $(call cc-option,-Werror=implicit-int)/' Makefile
-          # sed -i '/gcc-wrapper/d' Makefile
+          sed -i '/gcc-wrapper/d' Makefile
 
           # export PATH=${PATH}:${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin
           # export PATH=${PATH}:${{ github.workspace }}/${{ env.CONFIG }}/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin
@@ -177,8 +177,8 @@ jobs:
           # make O=out CC=aarch64-linux-android-gcc vendor/kona-perf_defconfig
           # make -j$(nproc --all) O=out CC=aarch64-linux-android-gcc
           
-          make O=out ARCH=arm64 CC=${CROSS_COMPILE}gcc LD=${CROSS_COMPILE}ld HOSTCC=gcc HOSTLD=ld KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" vendor/kona-perf_defconfig
-          make -j$(nproc) O=out ARCH=arm64 CC=${CROSS_COMPILE}gcc LD=${CROSS_COMPILE}ld HOSTCC=gcc HOSTLD=ld KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" all
+          make O=out CROSS_COMPILE=aarch64-linux-android- ARCH=arm64 CC=clang LD=ld KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" vendor/kona-perf_defconfig
+          make -j$(nproc) O=out CROSS_COMPILE=aarch64-linux-android- ARCH=arm64 CC=clang LD=ld KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" all
           
           # make O=out LLVM=1 LD=ld.lld HOSTLD=ld.lld ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CC=clang HOSTCC=clang KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" vendor/kona-perf_defconfig
           # make -j$(nproc) O=out LLVM=1 LD=ld.lld HOSTLD=ld.lld ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CC=clang HOSTCC=clang KCFLAGS+="-Wno-error" KBUILD_CFLAGS+="-Wno-pointer-sign -Wno-parentheses" HOSTCFLAGS+="-Wno-deprecated-declarations" all
