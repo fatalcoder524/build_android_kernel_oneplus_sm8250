@@ -189,15 +189,16 @@ jobs:
 #                                STRIP=llvm-strip
 
       - name: Create zip
+        if: always()
         run: |
           cd "$CONFIG"
           ls -la .
-          zip -r9 artifacts.zip out
+          tar -czf kernel-source.tar.gz --exclude='.git' --exclude='out' --warning=no-file-changed ./kernel ./vendor
 
       - name: Upload Kernel Source Archive
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: kernel-artifacts
-          path: ${{ env.CONFIG }}/*.zip
+          name: kernel-source-archive
+          path: ${{ env.CONFIG }}/kernel-source.tar.gz
           retention-days: 7
